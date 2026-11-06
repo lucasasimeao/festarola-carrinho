@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6b1f1f">
+<meta name="apple-mobile-web-app-title" content="Festarola">
+<meta name="format-detection" content="telephone=no">
+<title>Festarola | Distribuidora de Embalagens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Cores tiradas da fachada: letreiro creme com letra vinho, parede mostarda, toldo azul */
+  :root {
+    --vinho: #8c2a2a; --vinho-esc: #6b1f1f; --creme: #f7efe1; --creme-esc: #efe2cb;
+    --mostarda: #e9b949; --azul: #22396b; --texto: #2a211c; --cinza: #7d7168;
+    --branco: #fffdf9; --borda: #e8dcc8; --raio: 18px;
+    --serif: "Fraunces", Georgia, serif; --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --topo-h: 76px; /* altura do cabeçalho: usada pela barra de filtros e pelo aviso */
+    --seg-baixo: env(safe-area-inset-bottom, 0px); /* barra do iPhone */
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: calc(var(--topo-h) + 10px); }
+  body { margin: 0; font-family: var(--sans); background: var(--branco); color: var(--texto); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  body.travado { overflow: hidden; }
+  button, a, input, select, textarea, label { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  button { font-family: inherit; color: inherit; }
+  img { -webkit-user-drag: none; }
+  .chips::-webkit-scrollbar, .usos::-webkit-scrollbar { display: none; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+  .oculto { display: none !important; }
+
+  /* Faixa de aviso */
+  .aviso-topo { background: var(--vinho-esc); color: #f3e3d3; text-align: center; font-size: .7rem; padding: 9px 12px;
+                letter-spacing: 2.4px; text-transform: uppercase; }
+  .aviso-topo span { color: var(--mostarda); margin: 0 10px; }
+  .aviso-topo .so-largo { color: inherit; margin: 0; }
+
+  /* Cabeçalho: logo no centro, links à esquerda, pedido à direita */
+  .topo { background: rgba(255,253,249,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--borda); position: sticky; top: 0; z-index: 15; }
+  .topo .wrap { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: var(--topo-h); }
+  .menu { display: flex; gap: 26px; }
+  .menu a { color: var(--texto); text-decoration: none; font-size: .78rem; letter-spacing: 1.6px; text-transform: uppercase; font-weight: 500; }
+  .menu a:hover { color: var(--vinho); }
+  .marca { text-decoration: none; color: var(--vinho); line-height: 1; text-align: center; }
+  .marca b { font-family: var(--serif); font-weight: 600; font-size: 1.85rem; letter-spacing: 5px; display: block; }
+  .marca span { font-size: .6rem; letter-spacing: 3.6px; text-transform: uppercase; color: var(--cinza); font-weight: 500; }
+  .btn-sacola { justify-self: end; background: none; color: var(--texto); border: 1px solid var(--texto); border-radius: 999px;
+                padding: 10px 18px; font-weight: 500; font-size: .78rem; letter-spacing: 1.4px; text-transform: uppercase;
+                cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all .2s; }
+  .btn-sacola:hover { background: var(--texto); color: #fff; }
+  .btn-sacola .badge { background: var(--vinho); color: #fff; border-radius: 999px; min-width: 22px; height: 22px;
+                       display: grid; place-items: center; font-size: .72rem; font-weight: 600; padding: 0 6px; letter-spacing: 0; }
+
+  /* Destaque principal */
+  .hero { background: var(--creme); overflow: hidden; position: relative; }
+  .hero .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; padding-top: 80px; padding-bottom: 84px; }
+  .sobretitulo { display: flex; align-items: center; gap: 14px; font-size: .7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--vinho); font-weight: 600; }
+  .sobretitulo::before { content: ""; width: 42px; height: 1px; background: var(--mostarda); }
+  .hero h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(2.4rem, 5vw, 4rem); line-height: 1.04;
+             margin: 22px 0 22px; color: var(--texto); letter-spacing: -1px; }
+  .hero h1 em { color: var(--vinho); font-style: italic; font-weight: 500; }
+  .hero p { font-size: 1.04rem; color: #5d5249; max-width: 440px; line-height: 1.7; margin: 0 0 34px; }
+  .cta { display: inline-flex; align-items: center; gap: 12px; background: var(--vinho); color: #fff; text-decoration: none;
+         padding: 17px 30px; border-radius: 2px; font-size: .78rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; transition: background .2s; }
+  .cta:hover { background: var(--vinho-esc); }
+  .cta-sec { color: var(--texto); font-size: .78rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; text-decoration: none;
+             margin-left: 26px; padding-bottom: 4px; border-bottom: 1px solid var(--texto); }
+  .cta-sec:hover { color: var(--vinho); border-color: var(--vinho); }
+  .garantias { display: flex; gap: 26px; margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--creme-esc); flex-wrap: wrap; }
+  .garantias div { font-size: .8rem; color: #5d5249; }
+  .garantias b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1rem; color: var(--texto); margin-bottom: 2px; }
+
+  /* Três arcos com fotos */
+  .arcos { display: flex; align-items: flex-end; justify-content: center; gap: 16px; position: relative; }
+  .arco { width: 31%; max-width: 190px; border-radius: 999px 999px 4px 4px; overflow: hidden; background: #fff;
+          box-shadow: 0 30px 50px -30px rgba(107,31,31,.45); position: relative; }
+  .arco img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .arco:nth-child(1) { aspect-ratio: 1 / 1.55; }
+  .arco:nth-child(2) { aspect-ratio: 1 / 1.95; outline: 1px solid var(--mostarda); outline-offset: 8px; }
+  .arco:nth-child(3) { aspect-ratio: 1 / 1.4; }
+  .arcos .carimbo { position: absolute; top: 4%; right: 2%; width: 92px; height: 92px; border-radius: 50%; background: var(--vinho);
+                    color: #f3e3d3; display: grid; place-items: center; text-align: center; font-family: var(--serif); font-style: italic;
+                    font-size: .82rem; line-height: 1.15; transform: rotate(10deg); box-shadow: 0 10px 24px -10px rgba(0,0,0,.4); z-index: 2; }
+
+  /* Como funciona */
+  .passos { display: grid; grid-template-columns: repeat(3, 1fr); padding: 0 20px; margin-top: 46px; margin-bottom: 10px; }
+  .passo { padding: 8px 30px; border-left: 1px solid var(--borda); }
+  .passo:first-child { border-left: 0; padding-left: 0; }
+  .passo .n { font-family: var(--serif); font-style: italic; color: var(--mostarda); font-size: 1.5rem; }
+  .passo h4 { font-family: var(--serif); font-weight: 600; margin: 4px 0 6px; font-size: 1.15rem; }
+  .passo p { margin: 0; color: var(--cinza); font-size: .9rem; line-height: 1.55; }
+
+  /* Seções */
+  .secao { padding: 34px 0; }
+  .secao h2 { font-family: var(--serif); font-weight: 700; font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 0 0 6px; letter-spacing: -.3px; }
+  .secao .sub { color: var(--cinza); margin: 0 0 22px; }
+
+  /* Compre por uso */
+  .usos { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .uso { border: 0; background: none; padding: 0; text-align: center; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
+  .uso .img { aspect-ratio: 1 / 1.25; border-radius: 999px 999px 4px 4px; overflow: hidden; background: #fff; margin-bottom: 12px;
+              outline: 1px solid transparent; outline-offset: 6px; transition: outline-color .2s; }
+  .uso .img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s; }
+  .uso:hover .img img { transform: scale(1.06); }
+  .uso.ativo .img, .uso:hover .img { outline-color: var(--vinho); }
+  .uso b { font-family: var(--serif); font-weight: 500; font-size: 1.12rem; color: var(--texto); }
+  .uso small { color: var(--cinza); font-size: .8rem; }
+  .uso .ver { font-size: .68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--vinho); font-weight: 600; margin-top: 6px; }
+  .secao h2.centro, .secao .sub.centro { text-align: center; }
+  .secao .sobretitulo.centro { justify-content: center; margin-bottom: 10px; }
+  .secao .sobretitulo.centro::after { content: ""; width: 42px; height: 1px; background: var(--mostarda); }
+
+  /* Barra de filtros */
+  .filtros { position: sticky; top: var(--topo-h); z-index: 10; background: var(--branco); padding: 14px 0 10px; border-bottom: 1px solid var(--borda); }
+  .busca { width: 100%; padding: 13px 18px 13px 44px; border: 1.5px solid var(--borda); border-radius: 999px; font-size: .98rem;
+           outline: none; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%237d7168' stroke-width='2'%3E%3Ccircle cx='8' cy='8' r='6'/%3E%3Cpath d='m13 13 4 4'/%3E%3C/svg%3E") no-repeat 16px center; font-family: inherit; }
+  .busca:focus { border-color: var(--vinho); }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding-top: 12px; scrollbar-width: none; }
+  .chip { flex: none; border: 1.5px solid var(--borda); background: #fff; color: var(--texto); border-radius: 999px;
+          padding: 8px 16px; font-weight: 500; font-size: .88rem; cursor: pointer; transition: all .15s; }
+  .chip:hover { border-color: var(--vinho); }
+  .chip.ativo { background: var(--texto); border-color: var(--texto); color: #fff; }
+  .chip.uso-ativo { background: var(--mostarda); border-color: var(--mostarda); font-weight: 600; }
+
+  /* Produtos */
+  .grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 22px; padding-top: 24px; }
+  .card { display: flex; flex-direction: column; }
+  .card .foto { position: relative; aspect-ratio: 1 / .9; border-radius: var(--raio); display: grid; place-items: center;
+                font-size: 4.4rem; transition: transform .25s; }
+  .card:hover .foto { transform: scale(1.02); }
+  .foto.com-foto, .mini.com-foto { overflow: hidden; background: #fff !important; }
+  .foto img, .mini img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card .tag { position: absolute; z-index: 1; top: 12px; left: 12px; background: #fff; color: var(--vinho); font-size: .7rem; font-weight: 700;
+               letter-spacing: .6px; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; }
+  .card .cat { margin-top: 14px; font-size: .7rem; letter-spacing: 1.4px; text-transform: uppercase; color: var(--cinza); font-weight: 600; }
+  .card h3 { font-family: var(--serif); font-weight: 500; font-size: 1.15rem; margin: 4px 0 2px; line-height: 1.25; }
+  .linha-preco { display: flex; align-items: baseline; gap: 8px; margin: 4px 0 10px; }
+  .preco { font-weight: 700; font-size: 1.12rem; color: var(--vinho); }
+  .un { color: var(--cinza); font-size: .82rem; }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .pill { border: 1.5px solid var(--borda); background: #fff; border-radius: 10px; padding: 6px 10px; font-size: .8rem; cursor: pointer; transition: all .15s; }
+  .pill:hover { border-color: var(--texto); }
+  .pill.sel { border-color: var(--vinho); background: var(--vinho); color: #fff; }
+  .pills.tremer { animation: tremer .35s; }
+  @keyframes tremer { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  .acoes { display: flex; gap: 8px; margin-top: auto; }
+  .stepper { display: flex; align-items: center; border: 1.5px solid var(--borda); border-radius: 999px; background: #fff; }
+  .stepper button { width: 34px; height: 40px; border: 0; background: none; font-size: 1.1rem; cursor: pointer; color: var(--texto); }
+  .stepper span { min-width: 22px; text-align: center; font-weight: 600; }
+  .btn-add { flex: 1; border: 0; border-radius: 999px; background: var(--texto); color: #fff; font-weight: 600; font-size: .9rem;
+             cursor: pointer; transition: background .2s; }
+  .btn-add:hover { background: var(--vinho); }
+  .vazio { text-align: center; color: var(--cinza); padding: 50px 0; }
+
+  /* Rodapé */
+  footer { background: var(--vinho); color: #f3e3d3; margin-top: 50px; padding: 40px 0 110px; }
+  footer .wrap { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 24px; }
+  footer b.logo { font-family: var(--serif); font-size: 1.6rem; letter-spacing: 1.5px; color: #fff; }
+  footer h5 { margin: 0 0 8px; color: var(--mostarda); text-transform: uppercase; letter-spacing: 1.4px; font-size: .74rem; }
+  footer p { margin: 4px 0; font-size: .9rem; line-height: 1.5; }
+  .demo { grid-column: 1 / -1; border-top: 1px solid rgba(255,255,255,.18); padding-top: 16px; font-size: .78rem; opacity: .75; }
+
+  /* Barra fixa do carrinho */
+  .flutuante { position: fixed; left: 50%; bottom: 18px; transform: translate(-50%, 140%); z-index: 12; transition: transform .3s;
+               background: var(--texto); color: #fff; border: 0; border-radius: 999px; padding: 14px 22px; display: flex; gap: 14px;
+               align-items: center; box-shadow: 0 16px 34px -12px rgba(0,0,0,.45); cursor: pointer; font-size: .95rem; width: max-content; max-width: 92vw; }
+  .flutuante.ver { transform: translate(-50%, 0); }
+  .flutuante strong { color: var(--mostarda); }
+
+  /* Gaveta do carrinho */
+  .painel { position: fixed; inset: 0; background: rgba(42,33,28,.5); z-index: 30; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .painel.aberto { opacity: 1; pointer-events: auto; }
+  .gaveta { position: absolute; top: 0; right: 0; height: 100%; width: 100%; max-width: 460px; background: var(--branco);
+            transform: translateX(100%); transition: transform .3s; display: flex; flex-direction: column; }
+  .painel.aberto .gaveta { transform: none; }
+  .gaveta-topo { display: flex; justify-content: space-between; align-items: center; padding: 20px 22px; border-bottom: 1px solid var(--borda); }
+  .gaveta-topo h2 { font-family: var(--serif); margin: 0; font-size: 1.5rem; }
+  .fechar { background: var(--creme); border: 0; width: 38px; height: 38px; border-radius: 50%; font-size: 1.3rem; cursor: pointer; }
+  .gaveta-corpo { flex: 1; overflow-y: auto; padding: 8px 22px 24px; }
+  .item { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--borda); }
+  .item .mini { flex: none; width: 62px; height: 62px; border-radius: 14px; display: grid; place-items: center; font-size: 1.9rem; }
+  .item .info { flex: 1; min-width: 0; }
+  .item .info b { font-weight: 600; font-size: .94rem; display: block; }
+  .item .info small { color: var(--cinza); font-size: .8rem; }
+  .item .baixo { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .item .stepper button { width: 30px; height: 32px; }
+  .item .sub { font-weight: 700; }
+  .total { display: flex; justify-content: space-between; align-items: baseline; padding: 18px 0 6px; }
+  .total span:first-child { color: var(--cinza); }
+  .total span:last-child { font-family: var(--serif); font-size: 1.6rem; font-weight: 700; }
+  .nota { font-size: .8rem; color: var(--cinza); margin: 0 0 8px; }
+  .form h3 { font-family: var(--serif); font-weight: 600; margin: 22px 0 4px; font-size: 1.2rem; }
+  .form label.l { display: block; font-weight: 600; font-size: .85rem; margin: 14px 0 6px; }
+  .form input, .form select, .form textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--borda); border-radius: 12px;
+         font-size: 1rem; font-family: inherit; background: #fff; outline: none; }
+  .form input:focus, .form select:focus, .form textarea:focus { border-color: var(--vinho); }
+  .receb { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .receb label { border: 1.5px solid var(--borda); border-radius: 14px; padding: 14px; cursor: pointer; font-size: .9rem; background: #fff; }
+  .receb label b { display: block; margin-top: 4px; }
+  .receb input { position: absolute; opacity: 0; }
+  .receb label:has(input:checked) { border-color: var(--vinho); background: #fbf3ee; box-shadow: inset 0 0 0 1px var(--vinho); }
+  .erro { color: #b4142e; font-weight: 600; min-height: 1.2em; margin: 14px 0 0; font-size: .9rem; }
+  .btn-zap { width: 100%; border: 0; border-radius: 999px; background: #1fa855; color: #fff; font-weight: 700; font-size: 1.02rem;
+             padding: 16px; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .btn-zap:hover { background: #178a45; }
+  .ok { text-align: center; padding: 50px 10px; }
+  .ok .ic { width: 84px; height: 84px; border-radius: 50%; background: #dcefe3; display: grid; place-items: center; font-size: 2.6rem; margin: 0 auto 16px; }
+  .ok h2 { font-family: var(--serif); }
+  .ok .codigo { display: inline-block; background: var(--creme); border-radius: 10px; padding: 8px 16px; font-weight: 700; letter-spacing: 1px; margin: 6px 0 16px; }
+  .ok a { color: var(--vinho); font-weight: 600; }
+  .btn-voltar { margin-top: 20px; border: 1.5px solid var(--texto); background: none; border-radius: 999px; padding: 12px 24px; font-weight: 600; cursor: pointer; }
+
+  .toast { position: fixed; top: calc(var(--topo-h) + 10px); max-width: 90vw; text-align: center; left: 50%; transform: translate(-50%, -20px); background: var(--texto); color: #fff; z-index: 40;
+           padding: 12px 20px; border-radius: 999px; font-size: .9rem; opacity: 0; transition: all .25s; pointer-events: none; }
+  .toast.ver { opacity: 1; transform: translate(-50%, 0); }
+
+  /* Rolagem de lado com "encaixe" (chips e coleções) */
+  .chips, .usos { -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
+  .chip, .uso { scroll-snap-align: start; }
+  .gaveta-corpo { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  .linha-preco { flex-wrap: wrap; row-gap: 0; }
+  .form select { -webkit-appearance: none; appearance: none; padding-right: 40px;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%232a211c' stroke-width='1.6'%3E%3Cpath d='m1 1 5 5 5-5'/%3E%3C/svg%3E") no-repeat right 16px center; }
+  .form input[type="date"] { -webkit-appearance: none; appearance: none; min-height: 48px; display: block; text-align: left; }
+  .form input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+  /* Botão de enviar sempre visível no fim da gaveta */
+  .btn-zap { position: sticky; bottom: calc(10px + var(--seg-baixo)); box-shadow: 0 10px 24px -10px rgba(31,168,85,.6); z-index: 2; }
+  .gaveta-corpo { padding-bottom: calc(24px + var(--seg-baixo)); }
+  .flutuante { bottom: calc(18px + var(--seg-baixo)); }
+  footer { padding-bottom: calc(110px + var(--seg-baixo)); }
+
+  /* Efeitos de passar o mouse só em quem tem mouse (no toque eles "grudam") */
+  @media (hover: none) {
+    .card:hover .foto, .uso:hover .img img { transform: none; }
+    .uso:hover .img { outline-color: transparent; }
+    .uso.ativo .img { outline-color: var(--vinho); }
+    .btn-add:hover { background: var(--texto); }
+    .btn-sacola:hover { background: none; color: var(--texto); }
+    .chip:hover { border-color: var(--borda); }
+    .pill:hover { border-color: var(--borda); }
+    .pill.sel:hover { border-color: var(--vinho); }
+    .cta:hover { background: var(--vinho); }
+  }
+  /* Resposta visual ao toque */
+  .btn-add:active, .cta:active, .btn-zap:active, .pill:active, .chip:active, .stepper button:active, .flutuante:active { transform: scale(.97); }
+
+  @media (max-width: 860px) {
+    .hero .wrap { grid-template-columns: 1fr; padding-top: 40px; padding-bottom: 48px; gap: 36px; }
+    .menu { display: none; }
+    .topo .wrap { grid-template-columns: 1fr auto; }
+    .marca { text-align: left; }
+    .passos { grid-template-columns: 1fr; gap: 18px; }
+    .passo, .passo:first-child { border-left: 0; padding: 0 0 18px; border-bottom: 1px solid var(--borda); }
+    .usos { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 40%; overflow-x: auto; padding: 10px 20px 6px; margin: 0 -20px;
+            scroll-padding-left: 20px; scrollbar-width: none; }
+    footer .wrap { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    :root { --topo-h: 62px; }
+    .wrap { padding: 0 16px; }
+    .aviso-topo { font-size: .6rem; letter-spacing: 1.1px; padding: 8px 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .aviso-topo .so-largo { display: none; }
+    .marca b { font-size: 1.35rem; letter-spacing: 3.5px; }
+    .marca span { font-size: .52rem; letter-spacing: 2.4px; }
+    .btn-sacola { padding: 9px 12px; font-size: .7rem; letter-spacing: 1px; gap: 8px; }
+
+    /* Hero */
+    .hero .wrap { padding-top: 32px; padding-bottom: 40px; }
+    .sobretitulo { font-size: .62rem; letter-spacing: 1.8px; gap: 10px; }
+    .sobretitulo::before { width: 26px; }
+    .hero h1 { font-size: 2.3rem; margin: 16px 0; }
+    .hero p { font-size: .98rem; margin-bottom: 26px; }
+    .cta { display: flex; justify-content: center; width: 100%; padding: 17px 20px; }
+    .cta-sec { display: table; margin: 18px auto 0; }
+    .garantias { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 30px; padding-top: 20px; }
+    .garantias div { font-size: .7rem; line-height: 1.35; }
+    .garantias b { font-size: .84rem; line-height: 1.2; margin-bottom: 4px; }
+    .arcos { gap: 10px; }
+    .arcos .carimbo { width: 70px; height: 70px; font-size: .66rem; top: 0; right: 0; }
+    .passos { margin-top: 32px; }
+    .usos { margin: 0 -16px; padding: 10px 16px 6px; scroll-padding-left: 16px; grid-auto-columns: 44%; gap: 12px; }
+    .uso b { font-size: 1rem; }
+    .uso small { font-size: .74rem; }
+    .secao { padding: 28px 0; }
+
+    /* Filtros: campo com 16px para o iPhone não dar zoom */
+    .filtros { padding: 10px 0 8px; }
+    .busca { font-size: 16px; padding: 11px 16px 11px 42px; }
+    .chips { margin: 0 -16px; padding: 10px 16px 2px; scroll-padding-left: 16px; }
+    .chip { padding: 9px 15px; font-size: .84rem; }
+
+    /* Cards em 2 colunas */
+    .grade { grid-template-columns: 1fr 1fr; gap: 22px 12px; padding-top: 18px; }
+    .card .foto { font-size: 3rem; border-radius: 14px; aspect-ratio: 1; }
+    .card .tag { top: 8px; left: 8px; font-size: .58rem; padding: 4px 8px; letter-spacing: .4px; }
+    .card .cat { margin-top: 10px; font-size: .6rem; letter-spacing: 1.1px; }
+    .card h3 { font-size: .98rem; }
+    .preco { font-size: 1rem; }
+    .un { font-size: .74rem; }
+    .pills { gap: 5px; margin-bottom: 10px; }
+    .pill { min-height: 36px; padding: 6px 9px; font-size: .76rem; }
+    .acoes { flex-direction: column; gap: 6px; }
+    .stepper { justify-content: space-between; }
+    .stepper button { width: 44px; height: 40px; }
+    .btn-add { padding: 12px 8px; min-height: 44px; font-size: .86rem; }
+
+    /* Gaveta ocupa a tela toda */
+    .gaveta { max-width: none; height: 100%; height: 100dvh; }
+    .gaveta-topo { padding: 14px 16px; padding-top: calc(14px + env(safe-area-inset-top, 0px)); }
+    .gaveta-corpo { padding-left: 16px; padding-right: 16px; }
+    .item .stepper button { width: 40px; height: 38px; }
+    .form input, .form select, .form textarea { font-size: 16px; min-height: 48px; }
+    .receb label { padding: 12px; font-size: .85rem; }
+
+    /* Barra do total ocupa a largura */
+    .flutuante { left: 12px; right: 12px; width: auto; max-width: none; justify-content: space-between; transform: translateY(160%); padding: 15px 20px; }
+    .flutuante.ver { transform: none; }
+    .toast { font-size: .84rem; }
+  }
+  @media (max-width: 360px) {
+    .hero h1 { font-size: 2rem; }
+    .garantias { grid-template-columns: 1fr; }
+    .grade { gap: 18px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="aviso-topo"><span class="so-largo">Pedido pelo site<span>✦</span></span>Confirmação no WhatsApp<span>✦</span>Retirada no Mercadão</div>
+
+<header class="topo">
+  <div class="wrap">
+    <nav class="menu">
+      <a href="#produtos">Produtos</a>
+      <a href="#usos">Por uso</a>
+      <a href="#como">Como funciona</a>
+    </nav>
+    <a class="marca" href="#">
+      <b>FESTAROLA</b>
+      <span id="descricao"></span>
+    </a>
+    <button class="btn-sacola" id="abrir-sacola" type="button">
+      <span class="txt">Seu pedido</span> <span class="badge" id="badge">0</span>
+    </button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="sobretitulo">Distribuidora no Mercadão de Taubaté</span>
+      <h1>A embalagem certa faz o seu produto <em>valer mais.</em></h1>
+      <p>Caixas de confeitaria, potes, descartáveis e sacolas para quem vende comida, doce e presente, e para quem vai receber em casa.</p>
+      <a class="cta" href="#produtos">Montar meu pedido <span aria-hidden="true">→</span></a>
+      <a class="cta-sec" href="#usos">Compre por uso</a>
+      <div class="garantias">
+        <div><b>Pacote ou caixa</b>do varejo ao atacado</div>
+        <div><b>Retire no Mercadão</b>ou combine a entrega</div>
+        <div><b>Pedido no WhatsApp</b>chega pronto pra separar</div>
+      </div>
+    </div>
+    <div class="arcos" aria-hidden="true">
+      <div class="arco"><img src="fotos/sacola-kraft.png" alt=""></div>
+      <div class="arco"><img src="fotos/caixa-doce.png" alt=""></div>
+      <div class="arco"><img src="fotos/fita.png" alt=""></div>
+      <div class="carimbo">Feito para<br>quem vende</div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap passos" id="como">
+  <div class="passo"><div class="n">i.</div><h4>Escolha os produtos</h4><p>Tamanho, cor e quantidade, tudo pelo site, com o preço na hora.</p></div>
+  <div class="passo"><div class="n">ii.</div><h4>Retirada ou entrega</h4><p>Busque no Mercadão ou combine a entrega pelo WhatsApp.</p></div>
+  <div class="passo"><div class="n">iii.</div><h4>Envie e pronto</h4><p>O pedido chega organizado e a loja separa pra você.</p></div>
+</div>
+
+<section class="secao" id="usos">
+  <div class="wrap">
+    <span class="sobretitulo centro">Coleções</span>
+    <h2 class="centro">Compre por uso</h2>
+    <p class="sub centro">Do brigadeiro ao marmitex: veja o que combina com o que você faz.</p>
+    <div class="usos" id="lista-usos"></div>
+  </div>
+</section>
+
+<section class="secao" id="produtos" style="padding-top:10px">
+  <div class="wrap">
+    <h2>Produtos</h2>
+    <p class="sub">Preços por pacote ou caixa. Escolha a opção e a quantidade.</p>
+  </div>
+  <div class="filtros">
+    <div class="wrap">
+      <input id="busca" class="busca" type="search" enterkeyhint="search" autocomplete="off" placeholder="Buscar: copo, marmitex, sacola…">
+      <div id="chips" class="chips"></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div id="grade" class="grade"></div>
+    <p id="vazio" class="vazio oculto">Nenhum produto encontrado. Tente outra palavra.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><b class="logo">FESTAROLA</b><p id="rod-descricao"></p></div>
+    <div><h5>Onde estamos</h5><p id="rod-endereco"></p><p id="rod-horario"></p></div>
+    <div><h5>Pedidos</h5><p>Pelo site, com envio no WhatsApp.</p><p>Pagamento: Pix, dinheiro ou cartão.</p></div>
+    <p class="demo">Site de demonstração: produtos, preços e número de WhatsApp são fictícios.</p>
+  </div>
+</footer>
+
+<button class="flutuante" id="flutuante" type="button">🛍️ <span id="flu-qtd"></span> · <strong id="flu-total"></strong> · Ver pedido →</button>
+
+<div id="painel" class="painel">
+  <aside class="gaveta">
+    <div class="gaveta-topo">
+      <h2 id="titulo-gaveta">Seu pedido</h2>
+      <button class="fechar" data-fechar aria-label="Fechar">×</button>
+    </div>
+    <div class="gaveta-corpo">
+      <div id="tela-carrinho">
+        <div id="itens"></div>
+        <div class="total"><span>Total dos produtos</span><span id="total">R$ 0,00</span></div>
+        <p class="nota">Preços e estoque confirmados pela loja no WhatsApp.</p>
+
+        <form id="form" class="form" novalidate>
+          <h3>Seus dados</h3>
+          <label class="l" for="nome">Nome *</label>
+          <input id="nome" autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder="Como podemos te chamar?">
+
+          <label class="l">Como quer receber? *</label>
+          <div class="receb">
+            <label><input type="radio" name="receb" value="retirada" checked>🏪<b>Retirar no Mercadão</b></label>
+            <label id="op-entrega"><input type="radio" name="receb" value="entrega">🚚<b>Entrega</b></label>
+          </div>
+          <div id="campo-endereco" class="oculto">
+            <label class="l" for="endereco-cli">Endereço completo *</label>
+            <input id="endereco-cli" autocomplete="street-address" enterkeyhint="next" placeholder="Rua, número e bairro">
+            <p id="aviso-entrega" class="nota" style="margin-top:6px"></p>
+          </div>
+
+          <label class="l" for="data">Para quando? (opcional)</label>
+          <input id="data" type="date">
+
+          <label class="l" for="pagamento">Pagamento *</label>
+          <select id="pagamento"></select>
+          <div id="campo-troco" class="oculto">
+            <label class="l" for="troco">Troco para quanto? (opcional)</label>
+            <input id="troco" inputmode="decimal" placeholder="Ex.: R$ 100">
+          </div>
+
+          <label class="l" for="obs">Observações (opcional)</label>
+          <textarea id="obs" rows="2" placeholder="Ex.: nome da empresa, horário para retirar"></textarea>
+
+          <p id="erro" class="erro"></p>
+          <button class="btn-zap" type="submit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8 0-1.4.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.4.1.1.1.7-.1 1.3Z"/></svg>
+            Enviar pedido pelo WhatsApp
+          </button>
+          <p class="nota" style="text-align:center;margin-top:10px">O WhatsApp abre com o pedido pronto. É só tocar em enviar.</p>
+        </form>
+      </div>
+
+      <div id="tela-ok" class="ok oculto">
+        <div class="ic">✓</div>
+        <h2>Pedido montado!</h2>
+        <div class="codigo" id="ok-codigo"></div>
+        <p>Agora é só <strong>enviar a mensagem</strong> no WhatsApp.<br>A loja confirma e separa seu pedido.</p>
+        <p class="nota">O WhatsApp não abriu? <a id="ok-link" target="_blank" rel="noopener">Toque aqui</a>.</p>
+        <button class="btn-voltar" data-fechar type="button">Voltar à loja</button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="produtos.js"></script>
+<script src="pedido.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
